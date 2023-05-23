@@ -8,10 +8,56 @@
     <artifactId>mem-storage</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- SpringBoot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.0.6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2022.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>3.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2022.0.0.0-RC2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
+        <!-- entity -->
         <module>mem-module</module>
-        <module>mem-business</module>
+        <!-- common tools -->
         <module>mem-common</module>
+        <!-- gateway -->
+        <module>mem-gateway</module>
+        <!-- user service -->
+        <module>mem-user</module>
+        <module>mem-file</module>
+        <module>mem-im</module>
     </modules>
 
     <properties>
