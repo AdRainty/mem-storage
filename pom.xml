@@ -58,6 +58,7 @@
         <module>mem-user</module>
         <module>mem-file</module>
         <module>mem-im</module>
+        <module>mem-authority</module>
     </modules>
 
     <properties>

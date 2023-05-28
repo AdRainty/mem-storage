@@ -1,5 +1,7 @@
 package com.adrainty.common.response;
 
+import com.adrainty.common.constants.BizCodeEnum;
+import com.adrainty.common.constants.BizErrorConstant;
 import org.apache.http.HttpStatus;
 
 import java.io.Serial;
@@ -17,7 +19,7 @@ public class R extends HashMap<String, Object> {
 	}
 	
 	public static R error() {
-		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, "未知异常，请联系管理员");
+		return error(HttpStatus.SC_INTERNAL_SERVER_ERROR, BizErrorConstant.UNKNOWN_ERROR);
 	}
 	
 	public static R error(String msg) {
@@ -28,6 +30,13 @@ public class R extends HashMap<String, Object> {
 		R r = new R();
 		r.put("code", code);
 		r.put("msg", msg);
+		return r;
+	}
+
+	public static R error(BizCodeEnum bizCodeEnum) {
+		R r = new R();
+		r.put("code", bizCodeEnum.getErrCode());
+		r.put("msg", bizCodeEnum.getErrCode());
 		return r;
 	}
 

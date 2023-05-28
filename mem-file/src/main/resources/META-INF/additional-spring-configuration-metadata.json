@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "minio.isSSL",
+      "type": "java.lang.Boolean",
+      "description": "Description for minio.isSSL."
+  }
+] }

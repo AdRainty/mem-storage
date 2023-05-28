@@ -1,23 +1,28 @@
 spring:
-  datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.18.100:3306/fis_db?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
-    username: root
-    password: 123456
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
       routes:
         - id: authority_route
           uri: lb://mem-authority
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/authority/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: authority_route
+          uri: lb://mem-file
+          predicates:
+            - Path=/api/file/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 server:
   port: 9500
 logging:
   level:
-    root: info
-checkToken:
-  url: http://localhost:8850/oauth/check_token
+    root: debug

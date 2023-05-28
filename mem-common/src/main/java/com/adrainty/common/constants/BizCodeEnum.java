@@ -8,8 +8,8 @@ package com.adrainty.common.constants;
  */
 public enum BizCodeEnum {
 
-    UNKNOWN_EXCEPTION(500, "System Error"),
-    VALID_EXCEPTION(400, "Bad Request");
+    UNKNOWN_EXCEPTION(500, BizErrorConstant.UNKNOWN_ERROR),
+    UN_AUTHORITY(403, BizErrorConstant.UN_AUTHORITY_ERROR);
 
     private final Integer errCode;
     private final String msg;

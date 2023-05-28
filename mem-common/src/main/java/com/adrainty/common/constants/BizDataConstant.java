@@ -8,6 +8,11 @@ package com.adrainty.common.constants;
  */
 public class BizDataConstant {
 
+    public static final String TOKEN = "token";
+    public static final String USER = "user";
+    public static final String USER_ID = "userId";
+
+
     private BizDataConstant() {}
 
 }

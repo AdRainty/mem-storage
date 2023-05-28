@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "system.password.publicKey",
+      "type": "java.lang.String",
+      "description": "公钥."
+    },
+    {
+      "name": "system.password.privateKey",
+      "type": "java.lang.String",
+      "description": "私钥."
+    }
+  ] }

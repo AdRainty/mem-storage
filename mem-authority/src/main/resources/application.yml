@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.18.100:3306/fis_db?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
+    username: root
+    password: 123456
+server:
+  port: 9520
+logging:
+  level:
+    root: debug
+system:
+  password:
+    publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDFvtBEhNMm1uLBq3TUmJjsOet9wQ256Eq2TiqKT52OCK0W1MDCJ849on+FL/FjYwUvlpi+ZpkWf9gvY2XJwE9r35rU8r0EGp/6VOyv7cHhQM7Xqc5tO9GszJD00YrnyDwGg0Q4cBt9+PKBXh3M5ScoqVKmj6la3UWBlJ6sIJgFxwIDAQAB
+    privateKey: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMW+0ESE0ybW4sGrdNSYmOw5633BDbnoSrZOKopPnY4IrRbUwMInzj2if4Uv8WNjBS+WmL5mmRZ/2C9jZcnAT2vfmtTyvQQan/pU7K/tweFAztepzm070azMkPTRiufIPAaDRDhwG3348oFeHczlJyipUqaPqVrdRYGUnqwgmAXHAgMBAAECgYA2GOqPJCtD39uvEgHnO0vyrDHBeHQR3Pu7fgzjQ76docAAk/mb5BnnALKUNDZ8cxVzHGbzB8xvvE/fPvkUxZi0NSYmWZeVrqUSKa3PRDSaBqyOQsRHVGdmegi7RdVKr9zl+BiKszR4p5FBJ8O2upZkcC/2hwKQsAqlC9UIBlXliQJBAP8oJUNmDjSIJqxHCIsu1EkhGYWL6gy/z2iUxVSj8EJQxy3ecltMo/NXYAcg/K2y1zdKQorAqPu6sQo7re8AMJUCQQDGZhmJEvn6rAbLN0DALBIL9c625ItBeoriCHmV4bDQRfJ1PuVtIfRsIJEyl+oDfjZ6sbIJmvPW18ZTGVxMYXnrAkEAq64XZIIGjNIPM1uYJA4eSBY9Vd4OXQWySGvRWmH0BqrTWcmSqFuo9NKVijZnzXfH1yvgGfwHt1imRnxhS66VAQJBAI7dBpZGK+vt5BaBewbmtTgXkPryJ7TG4StSnvrmwcO4GpeC6wJi6PbTnLqp2cEaKXDAdEumYN/cENvV7zixGHECQD5RTkl6ZXR6KUnNg3H3bzSe6ZrHK85PAW5TrStIjIjcT6ykfDiqoPLRQ73HGqn2SonPc6vhbPRpDhCd0hBn7s4=

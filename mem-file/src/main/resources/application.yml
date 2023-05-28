@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.18.100:3306/fis_db?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
+    username: root
+    password: 123456
+server:
+  port: 9530
+logging:
+  level:
+    root: debug
+minio:
+  isSSL: false
+  endpoint: 192.168.18.100
+  port: 9001
+  accessKey: DZIr4FH6tnq6b34m
+  secretKey: Cr8K1KQudgYAOjjacXv3EteOKch2CHc7
+  bucketName: mem-storage-app

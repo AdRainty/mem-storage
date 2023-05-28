@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.18.100:3306/fis_db?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
+    username: root
+    password: 123456
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+server:
+  port: 9510
+logging:
+  level:
+    root: info

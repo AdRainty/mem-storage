@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: mem-file
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://192.168.18.100:8848
+        namespace: 04092f8a-73f5-42dd-b8c6-93fe30415928
+      config:
+        server-addr: http://192.168.18.100:8848
+        namespace: 04092f8a-73f5-42dd-b8c6-93fe30415928
