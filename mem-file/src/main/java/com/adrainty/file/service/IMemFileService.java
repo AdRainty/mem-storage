@@ -23,7 +23,7 @@ public interface IMemFileService extends IService<MemFile> {
      * @param path 当前路径
      * @return 文件列表
      */
-    List<MemFile> listFiles(Long userId, String path);
+    List<MemFile> listFiles(Long userId, String path, String name, String updateTime, String size);
 
     /**
      * 上传文件
@@ -55,4 +55,12 @@ public interface IMemFileService extends IService<MemFile> {
      * @param fileId 文件ID
      */
     void deleteFile(Long userId, Long fileId);
+
+    /**
+     * 根据关键词查找文件
+     * @param userId 用户Id
+     * @param keyword 关键词
+     * @return 文件列表
+     */
+    List<MemFile> searchKeyWord(Long userId, String keyword);
 }

@@ -69,36 +69,39 @@ public class MinioUtils {
 
     /**
      * 上传文件
-     * @param multipartFile 文件列表
+     * @param file 文件
      * @return 上传后的文件名
      */
-    public List<String> upload(MultipartFile[] multipartFile) {
-        List<String> names = new ArrayList<>(multipartFile.length);
-        for (MultipartFile file : multipartFile) {
-            String fileName = file.getOriginalFilename();
-            assert fileName != null;
-            String[] split = fileName.split("\\.");
-            if (split.length > 1) {
-                fileName = split[0] + "_" + System.currentTimeMillis() + "." + split[1];
-            } else {
-                fileName = fileName + "_" + System.currentTimeMillis();
+    public String upload(String path, MultipartFile file) {
+        existBucket(bucketName);
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        String[] split = fileName.split("\\.");
+        if (split.length > 1) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < split.length - 1; i++) {
+                sb.append(split[i]).append(".");
             }
-            InputStream in;
-            try {
-                in = file.getInputStream();
-                minioClient.putObject(PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .stream(in, in.available(), -1)
-                        .contentType(file.getContentType())
-                        .build()
-                );
-                names.add(fileName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            sb.setCharAt(sb.length() - 1, '_');
+            sb.append(System.currentTimeMillis()).append(".").append(split[split.length - 1]);
+            fileName = sb.toString();
+        } else {
+            fileName = fileName + "_" + System.currentTimeMillis();
         }
-        return names;
+        InputStream in;
+        try {
+            in = file.getInputStream();
+            minioClient.putObject(PutObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(path + "/" + fileName)
+                    .stream(in, in.available(), -1)
+                    .contentType(file.getContentType())
+                    .build()
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileName;
     }
 
     /**

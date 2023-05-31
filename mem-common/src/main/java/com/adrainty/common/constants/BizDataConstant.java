@@ -11,6 +11,10 @@ public class BizDataConstant {
     public static final String TOKEN = "token";
     public static final String USER = "user";
     public static final String USER_ID = "userId";
+    public static final String USER_NAME = "username";
+    public static final String HOME_PATH = "/我的网盘";
+    public static final String ASCENDING = "ascending";
+    public static final String DESCENDING = "descending";
 
 
     private BizDataConstant() {}

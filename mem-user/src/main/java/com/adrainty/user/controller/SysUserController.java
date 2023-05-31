@@ -12,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.annotation.Target;
+
 /**
  * @author AdRainty
  * @version V1.0.0
@@ -45,6 +47,13 @@ public class SysUserController {
     public R saveUser(@RequestBody SysUser sysUser){
         iSysUserService.save(sysUser);
         return R.ok().put(BizDataConstant.USER_ID, sysUser.getId());
+    }
+
+    @GetMapping("/getUsernameByUserId")
+    public R getUsernameByUserId(@RequestParam("id") Long id) {
+        SysUser select = iSysUserService.getById(id);
+        if (select == null) return R.error();
+        return R.ok().put(BizDataConstant.USER_NAME, select.getUsername());
     }
 
 }

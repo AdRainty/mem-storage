@@ -14,6 +14,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,23 +41,38 @@ public class MemFileController {
 
     @ApiOperation(value = "列出文件列表")
     @GetMapping("/list")
-    public R list(@RequestHeader("token") String token, @RequestParam("path") String path) {
+    public R list(@RequestHeader("token") String token, @RequestParam("path") String path
+            ,@RequestParam("name") String name, @RequestParam("updateTime") String updateTime
+            ,@RequestParam("size") String size) {
         Claims claims = getClaims(token);
         if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
 
         Long userId = Long.parseLong(claims.getId());
-        List<MemFile> memFiles = iMemFileService.listFiles(userId, path);
+        List<MemFile> memFiles = iMemFileService.listFiles(userId, path, name, updateTime, size);
+        return R.ok().put("list", memFiles);
+    }
+
+    @ApiOperation(value = "根据关键词查找文件")
+    @GetMapping("/keyword")
+    public R keyword(@RequestHeader("token") String token, @RequestParam("keyword") String keyword, @RequestParam("path") String path) {
+        Claims claims = getClaims(token);
+        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
+
+        Long userId = Long.parseLong(claims.getId());
+        List<MemFile> memFiles;
+        if (!StringUtils.hasLength(keyword)) memFiles = iMemFileService.listFiles(userId, path, null, null, null);
+        else memFiles = iMemFileService.searchKeyWord(userId, keyword);
         return R.ok().put("list", memFiles);
     }
 
     @ApiOperation(value = "上传")
     @PostMapping("/upload")
-    public R upload(@RequestHeader("token") String token, @RequestBody MultipartFile files, @RequestParam("path") String path) {
+    public R upload(@RequestHeader("token") String token, @RequestParam(value = "files") MultipartFile file, @RequestParam("path") String path) {
         Claims claims = getClaims(token);
         if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
 
         Long userId = Long.parseLong(claims.getId());
-        boolean result = iMemFileService.uploadFile(userId, path, files);
+        boolean result = iMemFileService.uploadFile(userId, path, file);
         return result? R.ok(): R.error();
     }
 

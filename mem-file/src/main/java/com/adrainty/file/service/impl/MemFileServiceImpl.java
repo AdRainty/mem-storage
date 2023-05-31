@@ -1,24 +1,25 @@
 package com.adrainty.file.service.impl;
 
+import com.adrainty.common.constants.BizDataConstant;
 import com.adrainty.common.constants.BizErrorConstant;
 import com.adrainty.common.exception.MemException;
+import com.adrainty.common.response.R;
 import com.adrainty.file.constant.FileTypeEnum;
+import com.adrainty.file.feign.UserClient;
 import com.adrainty.file.mapper.MemFileMapper;
 import com.adrainty.file.service.IMemFileService;
 import com.adrainty.file.utils.MinioUtils;
+import com.adrainty.module.base.BaseEntity;
 import com.adrainty.module.file.MemFile;
 import com.adrainty.module.file.MemFileVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -33,28 +34,61 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
 
     private final MinioUtils minioUtils;
 
+    private final UserClient userClient;
+
     @Autowired
-    public MemFileServiceImpl(MinioUtils minioUtils) {
+    public MemFileServiceImpl(MinioUtils minioUtils, UserClient userClient) {
         this.minioUtils = minioUtils;
+        this.userClient = userClient;
     }
 
     @Override
-    public List<MemFile> listFiles(Long userId, String path) {
+    public List<MemFile> listFiles(Long userId, String path, String name, String updateTime, String size) {
+        path = replacePath(userId, path);
         LambdaQueryWrapper<MemFile> wrapper = new LambdaQueryWrapper<>();
-        return this.baseMapper.selectList(wrapper.eq(MemFile::getBelongUser, userId).eq(MemFile::getPath, path));
+        List<MemFile> memFiles = this.baseMapper.selectList(wrapper.eq(MemFile::getBelongUser, userId).eq(MemFile::getPath, path));
+        if (BizDataConstant.ASCENDING.equals(name)) {
+            memFiles = memFiles.stream().sorted(Comparator.comparing(MemFile::getName)).toList();
+        } else if (BizDataConstant.DESCENDING.equals(name)) {
+            memFiles = memFiles.stream().sorted((o1, o2) ->  o2.getName().compareTo(o1.getName())).toList();
+        }
+
+        if (BizDataConstant.ASCENDING.equals(size)) {
+            memFiles = memFiles.stream().sorted((o1, o2) ->  {
+                if (FileTypeEnum.FOLDER.getCode().equals(o1.getType())) return 1;
+                if (FileTypeEnum.FOLDER.getCode().equals(o2.getType())) return -1;
+                return o1.getSize().compareTo(o2.getSize());
+            }).toList();
+        } else if (BizDataConstant.DESCENDING.equals(size)) {
+            memFiles = memFiles.stream().sorted((o1, o2) ->  {
+                if (FileTypeEnum.FOLDER.getCode().equals(o1.getType())) return -1;
+                if (FileTypeEnum.FOLDER.getCode().equals(o2.getType())) return 1;
+                return o2.getSize().compareTo(o1.getSize());
+            }).toList();
+        }
+
+        if (BizDataConstant.ASCENDING.equals(updateTime)) {
+            memFiles = memFiles.stream().sorted(Comparator.comparing(BaseEntity::getUpdateTime)).toList();
+        } else if (BizDataConstant.DESCENDING.equals(updateTime)) {
+            memFiles = memFiles.stream().sorted((o1, o2) ->  o2.getUpdateTime().compareTo(o1.getUpdateTime())).toList();
+        }
+        return memFiles;
     }
 
     @Override
-    public boolean uploadFile(Long userId, String path, MultipartFile files) {
-        List<String> names = minioUtils.upload(new MultipartFile[] {files});
-        if (CollectionUtils.isEmpty(names)) return false;
+    public boolean uploadFile(Long userId, String path, MultipartFile file) {
+        path = replacePath(userId, path);
+
+        String names = minioUtils.upload(path, file);
+        if (!StringUtils.hasLength(names)) return false;
         MemFile memFile = new MemFile();
-        memFile.setName(files.getOriginalFilename());
-        memFile.setRealName(names.get(0));
-        memFile.setSize(files.getSize());
+        memFile.setName(file.getOriginalFilename());
+        memFile.setRealName(names);
+        memFile.setSize(file.getSize());
         memFile.setPath(path);
-        memFile.setType(getType(files.getOriginalFilename()));
+        memFile.setType(getType(file.getOriginalFilename()));
         memFile.setBelongUser(userId);
+
         this.save(memFile);
         return true;
     }
@@ -62,7 +96,7 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
     @Override
     public MemFileVo downloadFile(Long fileId) {
         MemFile memFile = this.baseMapper.selectById(fileId);
-        byte[] stream = minioUtils.download(memFile.getRealName());
+        byte[] stream = minioUtils.download(memFile.getPath() + "/" + memFile.getRealName());
         MemFileVo memFileVo = new MemFileVo();
         memFileVo.setFileName(memFile.getName());
         memFileVo.setStream(stream);
@@ -71,6 +105,7 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
 
     @Override
     public void createNewFolder(Long userId, String folderName, String path) {
+        path = replacePath(userId, path);
         MemFile memFile = new MemFile();
         memFile.setBelongUser(userId);
         memFile.setPath(path);
@@ -104,6 +139,13 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
         } else return FileTypeEnum.OTHER.getCode();
     }
 
+    private String replacePath(Long userId, String path) {
+        R r = userClient.getUsernameByUserId(userId);
+        if (r.getCode() != 0) throw new MemException("系统异常");
+        String name = (String) r.get(BizDataConstant.USER_NAME);
+        return path.replace(BizDataConstant.HOME_PATH, name);
+    }
+
     @Override
     public void deleteFile(Long userId, Long fileId) {
         MemFile memFile = this.baseMapper.selectById(fileId);
@@ -114,16 +156,28 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
 
         LambdaQueryWrapper<MemFile> wrapper = new LambdaQueryWrapper<>();
         List<MemFile> memFiles = this.baseMapper.selectList(wrapper.eq(MemFile::getBelongUser, userId));
+        List<String> deleted = new ArrayList<>();
 
         if (memFile.getType().equals(FileTypeEnum.FOLDER.getCode())) {
             List<MemFile> ids = new ArrayList<>();
             ids.add(memFile);
             getChildren(ids, 0, memFiles);
+            ids.stream().filter(item -> !FileTypeEnum.FOLDER.getCode().equals(item.getType()))
+                    .forEach(item -> deleted.add(item.getPath() + "/" + item.getRealName()));
+            minioUtils.removeObjects(deleted);
             this.baseMapper.deleteBatchIds(ids.stream().map(MemFile::getId).toList());
         } else {
+            deleted.add(memFile.getPath() + "/" + memFile.getRealName());
             this.baseMapper.deleteById(fileId);
         }
 
+    }
+
+    @Override
+    public List<MemFile> searchKeyWord(Long userId, String keyword) {
+        LambdaQueryWrapper<MemFile> wrapper = new LambdaQueryWrapper<>();
+        List<MemFile> memFiles = this.baseMapper.selectList(wrapper.eq(MemFile::getBelongUser, userId));
+        return memFiles.stream().filter(item -> item.getName().contains(keyword)).toList();
     }
 
     public void getChildren(List<MemFile> ids, int ind, List<MemFile> all) {
