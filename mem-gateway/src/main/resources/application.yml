@@ -15,14 +15,26 @@ spring:
             - Path=/api/authority/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
-        - id: authority_route
+        - id: im_route
+          uri: lb://mem-im
+          predicates:
+            - Path=/api/im/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: file_route
           uri: lb://mem-file
           predicates:
             - Path=/api/file/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment}
+        - id: user_route
+          uri: lb://mem-user
+          predicates:
+            - Path=/api/user/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
 server:
   port: 9500
 logging:
   level:
-    root: debug
+    root: info

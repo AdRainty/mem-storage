@@ -6,7 +6,6 @@ import com.adrainty.common.utils.JwtUtils;
 import com.adrainty.file.service.IMemFileService;
 import com.adrainty.module.file.MemFile;
 import com.adrainty.module.file.MemFileVo;
-import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +43,9 @@ public class MemFileController {
     public R list(@RequestHeader("token") String token, @RequestParam("path") String path
             ,@RequestParam("name") String name, @RequestParam("updateTime") String updateTime
             ,@RequestParam("size") String size) {
-        Claims claims = getClaims(token);
-        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
 
-        Long userId = Long.parseLong(claims.getId());
+        Long userId = JwtUtils.getUserId(token);
+        if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
         List<MemFile> memFiles = iMemFileService.listFiles(userId, path, name, updateTime, size);
         return R.ok().put("list", memFiles);
     }
@@ -55,10 +53,8 @@ public class MemFileController {
     @ApiOperation(value = "根据关键词查找文件")
     @GetMapping("/keyword")
     public R keyword(@RequestHeader("token") String token, @RequestParam("keyword") String keyword, @RequestParam("path") String path) {
-        Claims claims = getClaims(token);
-        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
-
-        Long userId = Long.parseLong(claims.getId());
+        Long userId = JwtUtils.getUserId(token);
+        if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
         List<MemFile> memFiles;
         if (!StringUtils.hasLength(keyword)) memFiles = iMemFileService.listFiles(userId, path, null, null, null);
         else memFiles = iMemFileService.searchKeyWord(userId, keyword);
@@ -68,10 +64,8 @@ public class MemFileController {
     @ApiOperation(value = "上传")
     @PostMapping("/upload")
     public R upload(@RequestHeader("token") String token, @RequestParam(value = "files") MultipartFile file, @RequestParam("path") String path) {
-        Claims claims = getClaims(token);
-        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
-
-        Long userId = Long.parseLong(claims.getId());
+        Long userId = JwtUtils.getUserId(token);
+        if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
         boolean result = iMemFileService.uploadFile(userId, path, file);
         return result? R.ok(): R.error();
     }
@@ -94,10 +88,8 @@ public class MemFileController {
     @GetMapping("/newFolder")
     public R newFolder(@RequestHeader("token") String token, @RequestParam("folderName") String folderName,
                        @RequestParam("path") String path) {
-        Claims claims = getClaims(token);
-        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
-
-        Long userId = Long.parseLong(claims.getId());
+        Long userId = JwtUtils.getUserId(token);
+        if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
         iMemFileService.createNewFolder(userId, folderName, path);
         return R.ok();
     }
@@ -105,20 +97,10 @@ public class MemFileController {
     @ApiOperation(value = "删除文件")
     @GetMapping("/delete")
     public R delete(@RequestHeader("token") String token, @RequestParam("fileId") Long fileId) {
-        Claims claims = getClaims(token);
-        if (claims == null) return R.error(BizCodeEnum.UN_AUTHORITY);
-
-        Long userId = Long.parseLong(claims.getId());
+        Long userId = JwtUtils.getUserId(token);
+        if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
         iMemFileService.deleteFile(userId, fileId);
         return R.ok();
-    }
-
-    private Claims getClaims(String token) {
-        try {
-            return JwtUtils.parseJWT(token);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
 }

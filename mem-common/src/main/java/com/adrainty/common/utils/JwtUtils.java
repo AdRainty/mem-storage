@@ -46,6 +46,16 @@ public class JwtUtils {
                 .getBody();
     }
 
+    public static Long getUserId(String token) {
+        try {
+            Claims claims = JwtUtils.parseJWT(token);
+            if (claims == null) return -1L;
+            return Long.parseLong(claims.getId());
+        } catch (Exception e) {
+            return -1L;
+        }
+    }
+
     private static SecretKey generalKey() {
         byte[] encodeKey = Base64.getDecoder().decode(SECRET_KEY);
         return new SecretKeySpec(encodeKey, 0, encodeKey.length, "AES");

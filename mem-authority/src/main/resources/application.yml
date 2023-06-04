@@ -9,7 +9,7 @@ server:
   port: 9520
 logging:
   level:
-    root: debug
+    root: info
 system:
   password:
     publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDFvtBEhNMm1uLBq3TUmJjsOet9wQ256Eq2TiqKT52OCK0W1MDCJ849on+FL/FjYwUvlpi+ZpkWf9gvY2XJwE9r35rU8r0EGp/6VOyv7cHhQM7Xqc5tO9GszJD00YrnyDwGg0Q4cBt9+PKBXh3M5ScoqVKmj6la3UWBlJ6sIJgFxwIDAQAB
