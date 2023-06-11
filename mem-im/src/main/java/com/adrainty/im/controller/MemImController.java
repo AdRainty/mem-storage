@@ -3,10 +3,8 @@ package com.adrainty.im.controller;
 import com.adrainty.common.constants.BizCodeEnum;
 import com.adrainty.common.response.R;
 import com.adrainty.common.utils.JwtUtils;
-import com.adrainty.im.service.IMemImFriendService;
-import com.adrainty.im.service.IMemImGroupService;
-import com.adrainty.module.im.MemImGroup;
-import com.adrainty.module.sys.SysUserDto;
+import com.adrainty.im.service.IMemImService;
+import com.adrainty.module.im.MemTalkVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +28,11 @@ import java.util.List;
 @Slf4j
 public class MemImController {
 
-    private final IMemImGroupService iMemImGroupService;
-
-    private final IMemImFriendService iMemImFriendService;
+    private final IMemImService iMemImService;
 
     @Autowired
-    public MemImController(IMemImGroupService iMemImGroupService, IMemImFriendService iMemImFriendService) {
-        this.iMemImGroupService = iMemImGroupService;
-        this.iMemImFriendService = iMemImFriendService;
+    public MemImController(IMemImService iMemImService) {
+        this.iMemImService = iMemImService;
     }
 
     @ApiOperation(value = "查询对话")
@@ -46,11 +41,8 @@ public class MemImController {
 
         Long userId = JwtUtils.getUserId(token);
         if (userId < 0) return R.error(BizCodeEnum.UN_AUTHORITY);
-        List<MemImGroup> memImGroups = iMemImGroupService.searchGroupTalk(userId);
-        List<SysUserDto> sysUserDtos = iMemImFriendService.searchFriend(userId);
-        log.debug(String.valueOf(memImGroups));
-        log.debug(String.valueOf(sysUserDtos));
-        return R.ok();
+        List<MemTalkVo> memTalkVos = iMemImService.getTalkVo(userId);
+        return R.ok().put("talk", memTalkVos);
     }
 
 }

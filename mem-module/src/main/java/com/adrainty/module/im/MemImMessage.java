@@ -21,17 +21,23 @@ import java.io.Serializable;
 @Data
 public class MemImMessage extends BaseEntity implements Serializable {
 
-    @ApiModelProperty("接收者")
-    private Integer sender;
+    @ApiModelProperty("发送人")
+    private Long sender;
 
-    @ApiModelProperty("接收者")
-    private Integer receiver;
+    @ApiModelProperty("接收人")
+    private Long receiver;
 
     @ApiModelProperty("聊天类型")
-    private Integer type;
+    private Integer chatType;
+
+    @ApiModelProperty("消息类型")
+    private Integer msgType;
 
     @ApiModelProperty("聊天消息")
     private String message;
+
+    @ApiModelProperty("是否已读")
+    private Integer isRead;
 
 
 }

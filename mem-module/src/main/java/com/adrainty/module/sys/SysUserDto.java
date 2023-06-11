@@ -29,4 +29,7 @@ public class SysUserDto extends BaseEntity implements Serializable {
     @ApiModelProperty("手机号")
     private String telephone;
 
+    @ApiModelProperty("头像")
+    private String avatar;
+
 }
