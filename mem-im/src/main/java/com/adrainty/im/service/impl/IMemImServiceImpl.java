@@ -8,7 +8,8 @@ import com.adrainty.im.service.IMemImService;
 import com.adrainty.module.im.MemImGroup;
 import com.adrainty.module.im.MemTalkVo;
 import com.adrainty.module.sys.SysUserDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class IMemImServiceImpl implements IMemImService {
 
     private final IMemImGroupService iMemImGroupService;
@@ -29,14 +32,6 @@ public class IMemImServiceImpl implements IMemImService {
     private final IMemImFriendService iMemImFriendService;
 
     private final IMemImMsgService iMemImMsgService;
-
-    @Autowired
-    public IMemImServiceImpl(IMemImGroupService iMemImGroupService, IMemImFriendService iMemImFriendService,
-                             IMemImMsgService iMemImMsgService) {
-        this.iMemImGroupService = iMemImGroupService;
-        this.iMemImFriendService = iMemImFriendService;
-        this.iMemImMsgService = iMemImMsgService;
-    }
 
     @Override
     public List<MemTalkVo> getTalkVo(Long userId) {

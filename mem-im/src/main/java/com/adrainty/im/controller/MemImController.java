@@ -7,8 +7,8 @@ import com.adrainty.im.service.IMemImService;
 import com.adrainty.module.im.MemTalkVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,14 +26,10 @@ import java.util.List;
 @RequestMapping("/im")
 @Api(tags = "IM")
 @Slf4j
+@RequiredArgsConstructor
 public class MemImController {
 
     private final IMemImService iMemImService;
-
-    @Autowired
-    public MemImController(IMemImService iMemImService) {
-        this.iMemImService = iMemImService;
-    }
 
     @ApiOperation(value = "查询对话")
     @GetMapping("/getAllTalk")

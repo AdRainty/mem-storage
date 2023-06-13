@@ -2,8 +2,10 @@ package com.adrainty.im.feign;
 
 import com.adrainty.module.sys.SysUserDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,5 +19,8 @@ public interface SysUserClient {
 
     @PostMapping("/user/userInfoBatch")
     List<SysUserDto> userInfoBatch(@RequestBody List<Long> ids);
+
+    @GetMapping("/user/getUserInfo")
+    SysUserDto userInfo(@RequestParam("id") Long userId);
 
 }

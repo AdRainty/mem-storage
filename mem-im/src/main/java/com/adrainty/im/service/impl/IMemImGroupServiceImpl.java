@@ -9,6 +9,8 @@ import com.adrainty.module.im.MemImGroup;
 import com.adrainty.module.im.MemImMember;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +24,11 @@ import java.util.List;
  */
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class IMemImGroupServiceImpl extends ServiceImpl<MemImGroupMapper, MemImGroup> implements IMemImGroupService {
 
     private final IMemImMemberService iMemImMemberService;
-
-    @Autowired
-    public IMemImGroupServiceImpl(IMemImMemberService iMemImMemberService) {
-        this.iMemImMemberService = iMemImMemberService;
-    }
 
     @Override
     public List<MemImGroup> searchGroupTalk(Long userId) {

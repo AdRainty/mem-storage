@@ -77,6 +77,15 @@ public class SysUserController {
     }
 
     @ApiOperation(value = "查询当前用户详细信息")
+    @GetMapping("/getUserInfo")
+    public SysUserDto getUserInfo(@RequestParam("id") Long userId) {
+        SysUser user = iSysUserService.getById(userId);
+        SysUserDto sysUserDto = new SysUserDto();
+        BeanUtils.copyProperties(user, sysUserDto);
+        return sysUserDto;
+    }
+
+    @ApiOperation(value = "查询当前用户详细信息")
     @GetMapping("/userInfo")
     public R userInfo(@RequestHeader("token") String token){
         Long userId = JwtUtils.getUserId(token);

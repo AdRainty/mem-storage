@@ -7,6 +7,7 @@ import com.adrainty.im.service.IMemImGroupService;
 import com.adrainty.module.im.MemImGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,14 +22,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/im/group")
 @Api(tags = "IM Group模块")
+@RequiredArgsConstructor
 public class MemImGroupController {
 
     private final IMemImGroupService iMemImGroupService;
-
-    @Autowired
-    public MemImGroupController(IMemImGroupService iMemImGroupService) {
-        this.iMemImGroupService = iMemImGroupService;
-    }
 
     @ApiOperation(value = "查询讨论组")
     @GetMapping("/searchGroupTalk")

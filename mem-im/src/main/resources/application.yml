@@ -5,6 +5,12 @@ spring:
     url: jdbc:mysql://192.168.18.100:3306/fis_db?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
     username: root
     password: 123456
+rocketmq:
+  name-server: 192.168.18.100:9876
+  producer:
+    group: mem-im-group
+  consumer:
+    group: mem-im-group
 server:
   port: 9540
 logging:

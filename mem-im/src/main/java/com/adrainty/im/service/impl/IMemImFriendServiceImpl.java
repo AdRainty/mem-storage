@@ -6,6 +6,8 @@ import com.adrainty.im.service.IMemImFriendService;
 import com.adrainty.module.im.MemImFriend;
 import com.adrainty.module.sys.SysUserDto;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +21,11 @@ import java.util.List;
  */
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class IMemImFriendServiceImpl extends ServiceImpl<MemImFriendMapper, MemImFriend> implements IMemImFriendService {
 
     private final SysUserClient sysUserClient;
-
-    @Autowired
-    public IMemImFriendServiceImpl(SysUserClient sysUserClient) {
-        this.sysUserClient = sysUserClient;
-    }
 
     @Override
     public List<SysUserDto> searchFriend(Long userId) {

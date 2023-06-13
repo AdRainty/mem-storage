@@ -16,6 +16,7 @@ import com.adrainty.module.sys.SysUserDto;
 import com.alibaba.fastjson2.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,7 @@ import java.nio.charset.StandardCharsets;
  */
 @RestController
 @RequestMapping("/authority")
+@RequiredArgsConstructor
 @Api(tags = "注册登录模块")
 public class SysLoginController {
 
@@ -45,12 +47,6 @@ public class SysLoginController {
 
     @Value("${system.password.privateKey}")
     private String privateKey;
-
-    @Autowired
-    public SysLoginController(UserClient userClient, ISysLoginLogService iSysLoginLogService) {
-        this.userClient = userClient;
-        this.iSysLoginLogService = iSysLoginLogService;
-    }
 
     @ApiOperation(value = "登录")
     @PostMapping("/login")

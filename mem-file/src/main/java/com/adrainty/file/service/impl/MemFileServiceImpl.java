@@ -14,7 +14,7 @@ import com.adrainty.module.file.MemFile;
 import com.adrainty.module.file.MemFileVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,17 +30,12 @@ import java.util.*;
  * @since 2023-05-03
  */
 @Service
+@RequiredArgsConstructor
 public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> implements IMemFileService {
 
     private final MinioUtils minioUtils;
 
     private final UserClient userClient;
-
-    @Autowired
-    public MemFileServiceImpl(MinioUtils minioUtils, UserClient userClient) {
-        this.minioUtils = minioUtils;
-        this.userClient = userClient;
-    }
 
     @Override
     public List<MemFile> listFiles(Long userId, String path, String name, String updateTime, String size) {

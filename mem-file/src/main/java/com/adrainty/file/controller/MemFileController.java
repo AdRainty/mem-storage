@@ -8,7 +8,7 @@ import com.adrainty.module.file.MemFile;
 import com.adrainty.module.file.MemFileVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,14 +29,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/file")
 @Api(tags = "文件模块")
+@RequiredArgsConstructor
 public class MemFileController {
 
     private final IMemFileService iMemFileService;
-
-    @Autowired
-    public MemFileController(IMemFileService iMemFileService) {
-        this.iMemFileService = iMemFileService;
-    }
 
     @ApiOperation(value = "列出文件列表")
     @GetMapping("/list")
