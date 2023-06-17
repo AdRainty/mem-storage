@@ -5,8 +5,12 @@ import com.adrainty.common.exception.MemException;
 import com.adrainty.common.utils.JwtUtils;
 import com.adrainty.im.configuration.WebSocketConfig;
 import com.adrainty.im.constants.ChatTypeEnum;
+import com.adrainty.im.constants.MsgTypeEnum;
+import com.adrainty.im.constants.ReadTypeEnum;
+import com.adrainty.im.feign.FileClient;
 import com.adrainty.im.feign.SysUserClient;
 import com.adrainty.im.utils.RocketMQUtils;
+import com.adrainty.module.form.FileShareForm;
 import com.adrainty.module.im.MemImMessage;
 import com.adrainty.module.sys.SysUserDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,10 +18,9 @@ import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -87,12 +90,13 @@ public class MemWebSocketServer {
 
         RocketMQUtils rocketMQUtils = context.getBean(RocketMQUtils.class);
 
+
         try {
             imMessage = objectMapper.readValue(message, MemImMessage.class);
+            imMessage.setCreateTime(new Date());
+            imMessage.setUpdateTime(new Date());
             if(ChatTypeEnum.SINGLE_CHAT.getCode().equals(imMessage.getChatType())){
                 //单聊.需要找到发送者和接受者.
-
-                imMessage.setSender(Long.valueOf(session.getId())); //发送者
                 Long receiver = imMessage.getReceiver();
                 Session toSession = socketMap.get(receiver);
                 //发送给接受者.
@@ -101,7 +105,15 @@ public class MemWebSocketServer {
                     toSession.getAsyncRemote().sendText(message);
                 }
                 rocketMQUtils.sendSingle(imMessage);
+                if (MsgTypeEnum.FILE.getCode().equals(imMessage.getMsgType())) {
+                    FileShareForm fileShareForm = new FileShareForm();
+                    fileShareForm.setSender(imMessage.getSender());
+                    fileShareForm.setReceiver(imMessage.getReceiver());
+                    fileShareForm.setFileId(Long.parseLong(imMessage.getMessage()));
+                    shareFile(fileShareForm);
+                }
             } else{
+                imMessage.setIsRead(ReadTypeEnum.WAITING.getCode());
                 //群发消息
                 broadcast(nickname + ": " + imMessage.getMessage());
             }
@@ -115,7 +127,7 @@ public class MemWebSocketServer {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        log.warn(error.getMessage());
+        error.printStackTrace();
     }
 
     /**
@@ -125,5 +137,10 @@ public class MemWebSocketServer {
         for (Session ss: socketMap.values()) {
             ss.getAsyncRemote().sendText(message);     //异步发送消息.
         }
+    }
+
+    private void shareFile(FileShareForm form) {
+        FileClient fileClient = context.getBean(FileClient.class);
+        fileClient.share(form);
     }
 }

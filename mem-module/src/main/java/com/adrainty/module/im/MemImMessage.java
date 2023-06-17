@@ -1,13 +1,14 @@
 package com.adrainty.module.im;
 
-import com.adrainty.module.base.BaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author AdRainty
@@ -15,11 +16,22 @@ import java.io.Serializable;
  * @since 2023/6/3 18:35
  */
 
-@EqualsAndHashCode(callSuper = true)
 @TableName("mem_im_msg")
 @ApiModel(value = "聊天对象")
 @Data
-public class MemImMessage extends BaseEntity implements Serializable {
+public class MemImMessage implements Serializable {
+
+    @ApiModelProperty(value = "ID")
+    @TableId
+    private String id;
+
+    @ApiModelProperty(value = "创建时间")
+    @TableField("create_time")
+    private Date createTime;
+
+    @ApiModelProperty(value = "更新时间")
+    @TableField("update_time")
+    private Date updateTime;
 
     @ApiModelProperty("发送人")
     private Long sender;
@@ -31,7 +43,7 @@ public class MemImMessage extends BaseEntity implements Serializable {
     private Integer chatType;
 
     @ApiModelProperty("消息类型")
-    private Integer msgType;
+        private Integer msgType;
 
     @ApiModelProperty("聊天消息")
     private String message;

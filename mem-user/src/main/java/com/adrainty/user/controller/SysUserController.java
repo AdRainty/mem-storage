@@ -81,7 +81,7 @@ public class SysUserController {
     public SysUserDto getUserInfo(@RequestParam("id") Long userId) {
         SysUser user = iSysUserService.getById(userId);
         SysUserDto sysUserDto = new SysUserDto();
-        BeanUtils.copyProperties(user, sysUserDto);
+        if (user != null) BeanUtils.copyProperties(user, sysUserDto);
         return sysUserDto;
     }
 

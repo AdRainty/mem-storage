@@ -16,6 +16,10 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment}
         - id: im_route
+          uri: lb:ws://mem-im
+          predicates:
+            - Path=/im/websocket
+        - id: im_route
           uri: lb://mem-im
           predicates:
             - Path=/api/im/**

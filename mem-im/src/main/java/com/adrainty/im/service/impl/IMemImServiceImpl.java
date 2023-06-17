@@ -75,8 +75,7 @@ public class IMemImServiceImpl implements IMemImService {
         List<MemTalkVo> memTalkVos = new ArrayList<>();
         sysUserDtos.forEach(item -> {
             MemTalkVo memTalkVo = new MemTalkVo();
-            Long count = iMemImMsgService.getSingleMsgCount(item.getId());
-
+            Long count = iMemImMsgService.getSingleMsgCount(userId, item.getId());
             memTalkVo.setName(item.getUsername());
             memTalkVo.setAvatar(item.getAvatar());
             memTalkVo.setChatType(ChatTypeEnum.SINGLE_CHAT.getCode());

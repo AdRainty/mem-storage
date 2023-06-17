@@ -8,6 +8,7 @@ import com.adrainty.file.constant.FileTypeEnum;
 import com.adrainty.file.feign.UserClient;
 import com.adrainty.file.mapper.MemFileMapper;
 import com.adrainty.file.service.IMemFileService;
+import com.adrainty.file.service.IMemFileShareService;
 import com.adrainty.file.utils.MinioUtils;
 import com.adrainty.module.base.BaseEntity;
 import com.adrainty.module.file.MemFile;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * <p>
@@ -36,6 +40,8 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
     private final MinioUtils minioUtils;
 
     private final UserClient userClient;
+
+    private final IMemFileShareService iMemFileShareService;
 
     @Override
     public List<MemFile> listFiles(Long userId, String path, String name, String updateTime, String size) {
@@ -189,5 +195,30 @@ public class MemFileServiceImpl extends ServiceImpl<MemFileMapper, MemFile> impl
             }
         }
         getChildren(ids, size, all);
+    }
+
+    @Override
+    public MemFile getFile(Long userId, String id) {
+        LambdaQueryWrapper<MemFile> wrapper = new LambdaQueryWrapper<>();
+        MemFile memFile = this.baseMapper.selectOne(wrapper.eq(MemFile::getId, Long.parseLong(id)));
+        if (userId.equals(memFile.getBelongUser())) return memFile;
+        return iMemFileShareService.isShare(Long.parseLong(id), userId, "")? memFile: null;
+    }
+
+    @Override
+    public boolean saveFile(Long userId, Long fileId, String path, String code) {
+        if (iMemFileShareService.isShare(fileId, userId, code)) {
+            LambdaQueryWrapper<MemFile> wrapper = new LambdaQueryWrapper<>();
+            MemFile memFile = this.baseMapper.selectOne(wrapper.eq(MemFile::getId, fileId));
+            memFile.setBelongUser(userId);
+            memFile.setPath(replacePath(userId, path));
+            memFile.setId(null);
+            memFile.setCreateTime(null);
+            memFile.setUpdateTime(null);
+            this.baseMapper.insert(memFile);
+            return true;
+        }
+        return false;
+
     }
 }

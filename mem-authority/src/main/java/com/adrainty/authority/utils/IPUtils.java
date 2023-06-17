@@ -67,7 +67,7 @@ public class IPUtils {
             return search;
         } catch (Exception e) {
             log.error("IPUtils ERROR ", e);
-            throw new MemException("Get IP Error");
+            return "未知IP";
         }
     }
 }

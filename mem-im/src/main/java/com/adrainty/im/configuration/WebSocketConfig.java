@@ -32,8 +32,8 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator {
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
         // 这个userProperties 可以通过 session.getUserProperties()获取
         final Map<String, Object> userProperties = sec.getUserProperties();
-        Map<String, List<String>> headers = request.getHeaders();
-        List<String> token = headers.get("sec-websocket-protocol");
+        List<String> token = request.getParameterMap().get("token");
+        System.out.println(request.getParameterMap());
         userProperties.put("token", token.get(0));
     }
 }

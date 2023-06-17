@@ -63,4 +63,21 @@ public interface IMemFileService extends IService<MemFile> {
      * @return 文件列表
      */
     List<MemFile> searchKeyWord(Long userId, String keyword);
+
+    /**
+     * 根据ID获取文件
+     * @param userId 用户ID
+     * @param id 文件ID
+     * @return 文件对象
+     */
+    MemFile getFile(Long userId, String id);
+
+    /**
+     * 保存分享文件
+     * @param userId 用户ID
+     * @param fileId 文件ID
+     * @param path 路径
+     * @param code 分享码
+     */
+    boolean saveFile(Long userId, Long fileId, String path, String code);
 }
